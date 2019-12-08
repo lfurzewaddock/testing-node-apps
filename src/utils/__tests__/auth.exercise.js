@@ -2,37 +2,54 @@
 
 import {isPasswordAllowed} from '../auth'
 
-test('given a valid pw of "!aBc123" should return true', () => {
-  const result = isPasswordAllowed('!aBc123')
-  expect(result).toBe(true)
-})
+const keys = []
+const obj = {
+  '!aBc123': {
+    expected: true,
+    msg: 'given a valid pw of "!aBc123" should return true',
+  },
+  'a2c!': {
+    expected: false,
+    msg: 'given an invalid (too short) pw of "a2c!" should return false',
+  },
+  '123456!': {
+    expected: false,
+    msg:
+      'given an invalid (no alphabet characters) pw of "123456!" should return false',
+  },
+  'ABCdef!': {
+    expected: false,
+    msg: 'given an invalid (no numbers) pw of "ABCdef!" should return false',
+  },
+  'abc123!': {
+    expected: false,
+    msg:
+      'given an invalid (no uppercase letters) pw of "abc123!" should return false',
+  },
+  'ABC123!': {
+    expected: false,
+    msg:
+      'given an invalid (no lowercase letters) pw of "ABC123!" should return false',
+  },
+  ABCdef123: {
+    expected: false,
+    msg:
+      'given an invalid (no non-alphanumeric characters) pw of "ABCdef123" should return false',
+  },
+}
+for (const key in obj) {
+  // eslint-disable-next-line jest/no-if
+  if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    keys.push(key)
+  }
+}
 
-test('given an invalid (too short) pw of "a2c!" should return false', () => {
-  const result = isPasswordAllowed('a2c!')
-  expect(result).toBe(false)
-})
+keys.forEach(testVal => {
+  const testDetails = obj[testVal]
 
-test('given an invalid (no alphabet characters) pw of "123456!" should return false', () => {
-  const result = isPasswordAllowed('123456!')
-  expect(result).toBe(false)
-})
-
-test('given an invalid (no numbers) pw of "ABCdef!" should return false', () => {
-  const result = isPasswordAllowed('ABCdef!')
-  expect(result).toBe(false)
-})
-
-test('given an invalid (no uppercase letters) pw of "abc123!" should return false', () => {
-  const result = isPasswordAllowed('abc123!')
-  expect(result).toBe(false)
-})
-
-test('given an invalid (no lowercase letters) pw of "ABC123!" should return false', () => {
-  const result = isPasswordAllowed('ABC123!')
-  expect(result).toBe(false)
-})
-
-test('given an invalid (no non-alphanumeric characters) pw of "ABCdef123" should return false', () => {
-  const result = isPasswordAllowed('ABCdef123')
-  expect(result).toBe(false)
+  // eslint-disable-next-line jest/valid-title
+  test(testDetails.msg, () => {
+    const result = isPasswordAllowed(testVal)
+    expect(result).toBe(testDetails.expected)
+  })
 })
